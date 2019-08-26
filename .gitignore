@@ -1,0 +1,13 @@
+client_secret.json
+*.log
+TOKEN
+MASTERSHEET_ID
+__pycache__/
+data/
+.vscode/
+imperium.code-workspace
+config/config.py
+pylintrc
+bot.bat
+cleanup.py
+config.py
