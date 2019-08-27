@@ -13,9 +13,9 @@ CREDS = ServiceAccountCredentials.from_json_keyfile_name(
 
 class SheetService:
     """Namespace class"""
-    #SPREADSHEET_ID="1UuHysgRw2t1PzlEnqM_8QDACm0eX4uDe8LtO9scIhGQ"
+    SPREADSHEET_ID="1zvXMjDOuFi73-Ni2uRe5bvhEcIwNWlA6CkZ_PBwdPV4"
     # dev spreadsheet below
-    SPREADSHEET_ID = "1KxgA8wD2GS7VKCePvJkrlQCprwONMU8x31VS3n1F0Xk"
+    #SPREADSHEET_ID = "1KxgA8wD2GS7VKCePvJkrlQCprwONMU8x31VS3n1F0Xk"
     IMPORT_SHEET="TheBot"
 
     _matches = []
