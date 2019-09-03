@@ -10,6 +10,7 @@ from sheet_service import SheetService
 import bb2
 
 agent = bb2.api.Agent(BB_API_KEY)
+exported_ids_array = []
 
 def filename(uuid):
     return os.path.join(STORE, f"{uuid}.json")
@@ -50,13 +51,20 @@ def max_imported_id():
         max_id = 0
     return max_id
 
+def exported_ids():
+    global exported_ids_array
+    if not exported_ids_array:
+        matches = SheetService.matches()
+        exported_ids_array = sorted([match['ID'] for match in matches])
+    return exported_ids_array
+
 def export_match(uuid):
     data = load_match(uuid)
     #no coach name => AI
     if not data['match']['coaches'][0]['coachname'] or not data['match']['coaches'][1]['coachname']:
         return
 
-    if data['match']['id'] > max_imported_id():
+    if data['match']['id'] not in exported_ids():
         t1 = data['match']['teams'][0]
         t2 = data['match']['teams'][1]
         t1_stats = [t1['score'], t1['inflictedtackles'], t1['inflictedcasualties'], t1['inflictedko'], t1['inflictedinjuries'], t1['inflictedpushouts'],
