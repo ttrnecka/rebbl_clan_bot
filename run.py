@@ -58,10 +58,14 @@ def exported_ids():
         exported_ids_array = sorted([match['ID'] for match in matches])
     return exported_ids_array
 
-def export_match(uuid):
+def export_match(uuid, concede=False):
     data = load_match(uuid)
     #no coach name => AI
     if not data['match']['coaches'][0]['coachname'] or not data['match']['coaches'][1]['coachname']:
+        return
+
+    # if the match is concede and we do not want them, ignore
+    if not concede and bb2.is_concede(data):
         return
 
     if data['match']['id'] not in exported_ids():
@@ -95,7 +99,7 @@ def export_match(uuid):
 # run the application
 def main(argv):
     """main()"""
-    logger.info("Getting matches")
+    logger.info("Getting played matches")
     try:
         data = agent.contests(league=",".join(LEAGUES))
     except Exception as exc:
@@ -109,8 +113,26 @@ def main(argv):
     for match in data['upcoming_matches']:
         logger.info("Collecting match %s", match['match_uuid'])
         get_and_save_match_file(match['match_uuid'])
-        export_match(match['match_uuid'])
+        export_match(match['match_uuid'], concede=True)
         logger.info("Match %s saved", match['match_uuid'])
+
+    logger.info("Getting scheduled matches")
+    try:
+        data = agent.contests(league=",".join(LEAGUES), status="scheduled")
+    except Exception as exc:
+        logger.error(exc)
+        raise exc
+    logger.info("Contest colleted")
+
+    if not os.path.isdir(STORE):
+        os.mkdir(STORE)
+
+    for match in data['upcoming_matches']:
+        if match['match_uuid']:
+            logger.info("Collecting match %s", match['match_uuid'])
+            get_and_save_match_file(match['match_uuid'])
+            export_match(match['match_uuid'], concede=False)
+            logger.info("Match %s saved", match['match_uuid'])
 
 if __name__ == "__main__":
     main(sys.argv[1:])
